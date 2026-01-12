@@ -19,38 +19,10 @@ void check_init() {
 
 }
 
-int has_char_before_dot(const char *filename, char c) {
-  int found_c = 0;
-  for (int i = 0; filename[i] != '\0'; i++) {
-    if (filename[i] == '.') return found_c;
-    if (filename[i] == c) {
-      found_c = 1;
-    }
-  }
-  return 0;
-}
-
-void parse_names(char runlevel) {
-  DIR *d;
-  struct dirent *dir;
-  d = opendir(INIT_DIRECTORY);
-  if (d) {
-    while ((dir = readdir(d)) != NULL) {
-      // Use 8 if DT_REG is not defined (standard on most Linux systems)
-      #ifndef DT_REG
-      #define DT_REG 8
-      #endif
-      #ifndef DT_LNK
-      #define DT_LNK 10
-      #endif
-      if (dir->d_type == DT_REG || dir->d_type == DT_LNK) {
-        if (has_char_before_dot(dir->d_name, runlevel)) {
-          printf("File: %s, Number: %c\n", dir->d_name, runlevel);
-        }
-      }
-    }
-    closedir(d);
-  }
+void run(int runlevel) {
+  char command[1024];
+  snprintf(command, sizeof(command), "%s %s/%d", SHELL, INIT_DIRECTORY, runlevel);
+  system(command);
 }
 
 int main(int argc, char* argv[]) {
@@ -61,6 +33,6 @@ int main(int argc, char* argv[]) {
   char runlevel = argv[1][0];
 
   check_init();
-  parse_names(runlevel);
+  run;
   return 0;
 }
