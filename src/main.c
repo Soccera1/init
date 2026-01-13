@@ -21,7 +21,7 @@ void check_init() {
 
 void run(int runlevel) {
   char command[1024];
-  snprintf(command, sizeof(command), "%s %s/%d", SHELL, INIT_DIRECTORY, runlevel);
+  snprintf(command, sizeof(command), "cd %s && PATH=\"$PATH:%s\" %s %d", INIT_DIRECTORY, INIT_DIRECTORY, SHELL, runlevel);
   system(command);
 }
 
@@ -30,9 +30,9 @@ int main(int argc, char* argv[]) {
     printf("Usage: %s <runlevel>\n", argv[0]);
     return 1;
   }
-  char runlevel = argv[1][0];
+  int runlevel = atoi(argv[1]);
 
   check_init();
-  run;
+  run(runlevel);
   return 0;
 }
