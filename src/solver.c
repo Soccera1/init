@@ -45,15 +45,16 @@ static int has_char_before_dot(const char *filename, char c) {
 static void get_generic_name(const char *filename, char *dest) {
     const char *dot = strchr(filename, '.');
     if (dot) {
-        strcpy(dest, dot + 1);
+        strncpy(dest, dot + 1, MAX_NAME - 1);
     } else {
-        strcpy(dest, filename);
+        strncpy(dest, filename, MAX_NAME - 1);
     }
+    dest[MAX_NAME - 1] = '\0';
 }
 
 static int find_script_idx(const char *generic_name) {
     for (int i = 0; i < num_scripts; i++) {
-        if (strcmp(scripts[i].generic_name, generic_name) == 0) {
+        if (strncmp(scripts[i].generic_name, generic_name, MAX_NAME) == 0) {
             return i;
         }
     }
@@ -82,7 +83,8 @@ void solve_dependencies(char runlevel) {
             if (num_scripts >= MAX_SCRIPTS) break;
 
             Script *s = &scripts[num_scripts];
-            strncpy(s->full_name, dir->d_name, MAX_NAME);
+            strncpy(s->full_name, dir->d_name, MAX_NAME - 1);
+            s->full_name[MAX_NAME - 1] = '\0';
             get_generic_name(dir->d_name, s->generic_name);
             s->num_dependencies = 0;
             s->in_degree = 0;
@@ -100,7 +102,9 @@ void solve_dependencies(char runlevel) {
                     }
                     char *token = strtok(start, " \t\n\r");
                     while (token && s->num_dependencies < MAX_DEPS) {
-                        strncpy(s->dependencies[s->num_dependencies++], token, MAX_NAME);
+                        strncpy(s->dependencies[s->num_dependencies], token, MAX_NAME - 1);
+                        s->dependencies[s->num_dependencies][MAX_NAME - 1] = '\0';
+                        s->num_dependencies++;
                         token = strtok(NULL, " \t\n\r");
                     }
                 }

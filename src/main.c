@@ -2,6 +2,10 @@
 #include <sys/stat.h>
 #include <stdlib.h>
 #include <dirent.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include "config.h"
 
 void check_init() {
@@ -20,9 +24,54 @@ void check_init() {
 }
 
 void run(int runlevel) {
-  char command[1024];
-  snprintf(command, sizeof(command), "cd %s && PATH=\"$PATH:%s\" %s %d", INIT_DIRECTORY, INIT_DIRECTORY, SHELL, runlevel);
-  system(command);
+  char runlevel_str[12];
+  snprintf(runlevel_str, sizeof(runlevel_str), "%d", runlevel);
+
+  pid_t pid = fork();
+  if (pid == -1) {
+    perror("fork");
+    exit(1);
+  }
+
+  if (pid == 0) {
+    // Child process
+    if (chdir(INIT_DIRECTORY) != 0) {
+      perror("chdir");
+      _exit(1);
+    }
+
+    const char *old_path = getenv("PATH");
+    char *new_path = NULL;
+    if (old_path) {
+      size_t len = strlen(old_path) + strlen(INIT_DIRECTORY) + 2;
+      new_path = (char *)malloc(len);
+      if (new_path) {
+        snprintf(new_path, len, "%s:%s", old_path, INIT_DIRECTORY);
+      }
+    } else {
+      size_t len = strlen(INIT_DIRECTORY) + 1;
+      new_path = (char *)malloc(len);
+      if (new_path) {
+        snprintf(new_path, len, "%s", INIT_DIRECTORY);
+      }
+    }
+
+    if (new_path) {
+      setenv("PATH", new_path, 1);
+      free(new_path);
+    }
+
+    execl(SHELL, SHELL, runlevel_str, (char *)NULL);
+    perror("execl");
+    _exit(1);
+  } else {
+    // Parent process
+    int status;
+    if (waitpid(pid, &status, 0) == -1) {
+      perror("waitpid");
+      exit(1);
+    }
+  }
 }
 
 int main(int argc, char* argv[]) {
