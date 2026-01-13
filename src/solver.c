@@ -94,7 +94,11 @@ void solve_dependencies(char runlevel) {
             if (f) {
                 char line[1024];
                 if (fgets(line, sizeof(line), f)) {
-                    char *token = strtok(line, " \t\n\r");
+                    char *start = line;
+                    if (strncmp(line, DEPENDENCY_PREFIX, strlen(DEPENDENCY_PREFIX)) == 0) {
+                        start += strlen(DEPENDENCY_PREFIX);
+                    }
+                    char *token = strtok(start, " \t\n\r");
                     while (token && s->num_dependencies < MAX_DEPS) {
                         strncpy(s->dependencies[s->num_dependencies++], token, MAX_NAME);
                         token = strtok(NULL, " \t\n\r");

@@ -1,2 +1,2 @@
-logging.sh
+# logging.sh
 echo "Network service started"

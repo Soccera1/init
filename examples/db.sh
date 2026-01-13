@@ -1,2 +1,2 @@
-network.sh
+# network.sh
 echo "Database service started"
