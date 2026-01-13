@@ -41,7 +41,7 @@ gcc src/solver.c -o bin/solver
 ## Development Conventions
 
 ### Service Scripts
-- **Location:** Place scripts in the directory defined by `INIT_DIRECTORY` (default: `examples/`).
+- **Location:** Place scripts in the directory defined by `INIT_DIRECTORY` (default: `/etc/init/init.d`).
 - **Naming:**
     - Runlevel-specific: `<runlevel>.<generic_name>` (e.g., `1.logging.sh`). These are typically **symlinks** to the generic scripts.
     - Generic: `<generic_name>` (e.g., `logging.sh`). This is the file actually executed by the runner.

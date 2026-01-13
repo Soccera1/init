@@ -23,4 +23,4 @@ gcc src/solver.c -o bin/solver
 
 ## Configuration
 
-Service scripts are located in `examples/`. Dependencies are declared on the first line of runlevel-specific scripts (e.g., `1.service.sh`) using a `#` prefix followed by the generic script names.
+Example service scripts are located in `examples/`. Dependencies are declared on the first line of runlevel-specific scripts (e.g., `1.service.sh`) using a `#` prefix followed by the generic script names.
