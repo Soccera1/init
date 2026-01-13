@@ -5,9 +5,7 @@ A dependency-aware init system that resolves service order and executes them.
 ## Building
 
 ```bash
-mkdir -p bin
-gcc src/main.c -o bin/main
-gcc src/solver.c -o bin/solver
+make
 ```
 
 ## Usage

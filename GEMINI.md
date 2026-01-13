@@ -20,10 +20,9 @@ The individual service scripts are interpreted by the configured `SHELL` (defaul
 - The interpreter specified in `src/config.h` (e.g., `/bin/sh`).
 
 ### Building
-Compile the components manually:
+Compile the components with make:
 ```bash
-gcc src/main.c -o bin/main
-gcc src/solver.c -o bin/solver
+make
 ```
 
 ### Running
